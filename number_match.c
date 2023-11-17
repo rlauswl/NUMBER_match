@@ -6,7 +6,6 @@
 #define X 5
 
 void print_ground(int ground[Y][X]) { //화면에 ground 출력
-    system("cls || clear");
     printf("    | 1 2 3 4 5\n");
     printf("  --|-----------\n");
     for (int i = 0; i < Y; i++) {
@@ -84,6 +83,7 @@ void del(int arr[Y][X], int num) {
                 arr[i][j] = arr[i + 1][j];
                 arr[i + 1][j] = temp;
             }
+    system("cls || clear");
     print_ground(arr);
 }
 
@@ -125,12 +125,19 @@ int main() {
     int level, score = 0, heart = 0, addnum = 0;
     char name[20];
     printf("Number Match Game\n");
-    printf("*게임 방법*\n1.가로, 세로, 대각선으로 닿아있는 같은 숫자의 좌표를 입력해 숫자를 0으로 만든다.\n  (n열의 마지막 행과 n+1열의 첫번째 행도 가로에 포함한다.)\n2.4줄을 0으로 만들면 승리한다.\n3.첫 번째 좌표 입력에서 0 0을 입력하는 경우 숫자가 추가된다.\n\n난이도를 설정하세요(입력한 난이도의 숫자 갯수가 생성됩니다):");
+    printf("*게임 방법*\n1.가로, 세로, 대각선으로 닿아있는 같은 숫자의 좌표를 입력해 숫자를 0으로 만든다.\n  (n열의 마지막 행과 n+1열의 첫번째 행도 가로에 포함한다.)\n2.4줄을 0으로 만들면 승리한다.\n3.첫 번째 좌표 입력에서 0 0을 입력하는 경우 숫자가 추가된다.\n\n*좌표 입력 예시: 1 3(첫 번째 줄 세번 째)\n\n");
+    printf("난이도를 설정하세요(입력한 난이도의 숫자 갯수가 생성됩니다) :");
     scanf("%d", &level);
     printf("이름을 입력하시요:");
     scanf("%s", name);
-    printf("좌표 입력 예시: 1 3(첫 번째 줄 세번 째)\n\n");
-
+    printf("게임을 시작하려면 s를 누르시오.");
+    while (1) {   //s를 입력할 때 게임 시작
+        scanf("%c", &start);
+        if (start == 's') {
+            system("cls || clear");
+            break;
+        }
+    }
     srand((unsigned)time(NULL));
     int ground[Y][X];
     for (int i = 0; i < Y; i++)
@@ -139,7 +146,7 @@ int main() {
 
     print_ground(ground);
 
-    while (score < 4) {
+    while (1) {
         _POINT d1, d2;
         printf("첫 번째 좌표를 입력하시오:");
         scanf_s("%d %d", &d1.x, &d1.y);
@@ -155,22 +162,30 @@ int main() {
             else {
                 heart++;
                 if (heart == 5) {
-                    printf("\nGame Over\n\n", name);
+                    printf("\nGame Over\n\n%s님의 점수: %d", name, 5 * (level - 1) + score);
                     break;
                 }
-                print_heart(5 - heart);
                 printf("다시 입력하세요.\n\n");
             }
+            system("cls || clear");
+            printf("score:%d\n", score);
+            print_heart(5 - heart);
             print_ground(ground);
             scan(ground, &score, addnum);
-            printf("score:%d\n", score);
         }
         else {
             ground_add(ground, level);
             addnum++;
         }
         if (score == 5) {
-            printf("\n%s님이 승리하였습니다!\n\n", name);
+            printf("승리하셨습니다! 다음 단계로 넘어갑니다.\n");
+            level++; //다음 단계 생성
+            score = 0;
+            for (int i = 0; i < Y; i++)
+                for (int j = 0; j < X; j++)
+                    ground[i][j] = rand() % level + 1;
+
+            print_ground(ground);
         }
     }
 }
