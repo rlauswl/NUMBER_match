@@ -10,7 +10,7 @@
 
 void print_howto();
 
-void print_ground(int ground[Y][X]) { //í™”ë©´ì— ground ì¶œë ¥
+void print_ground(int ground[Y][X]) { //È­¸é¿¡ ground Ãâ·Â
     printf("    | 1 2 3 4 5\n");
     printf("  --|-----------\n");
     for (int i = 0; i < Y; i++) {
@@ -22,15 +22,17 @@ void print_ground(int ground[Y][X]) { //í™”ë©´ì— ground ì¶œë ¥
     printf("\n");
 }
 
-void textcolor(int color_number) {   //ê¸€ì”¨ ìƒ‰ ë³€ê²½
+void textcolor(int color_number) {   //±Û¾¾ »ö º¯°æ
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color_number);
 }
 
-void print_heart(int heart) { //ëª©ìˆ¨ â™¥ë¡œ í‘œí˜„
-    printf("ë‚¨ì€ ëª©ìˆ¨: ");
+void print_heart(int heart, int score, int level) { //¸ñ¼û ¢¾·Î Ç¥Çö
+    system("cls || clear");
+    printf("score:%d\n", (level - 1) * 5 + score);
+    printf("³²Àº ¸ñ¼û: ");
     textcolor(4);
     for (int i = 0; i < heart; i++)
-        printf("â™¥");
+        printf("¢¾");
     printf("\n");
     textcolor(7);
 }
@@ -44,44 +46,31 @@ int abs(int num) {
     return(num > 0 ? num : -num);
 }
 
-int match1(int ground[Y][X], _POINT d1, _POINT d2) { //ìƒí•˜ ê´€ê³„ì˜ _POINT ê°’ì´ ê°™ì€ì§€ íŒë³„
-    if (d1.x == d2.x && abs(d1.y - d2.y) == 1)
+int match(int ground[Y][X], _POINT d1, _POINT d2) {
+    if (d1.x == d2.x && abs(d1.y - d2.y) == 1)        //»óÇÏ °ü°èÀÇ _POINT °ªÀÌ °°ÀºÁö ÆÇº°
         if (ground[d1.x][d1.y] == ground[d2.x][d2.y])
             return 1;
+    if (d1.y == d2.y && abs(d1.x - d2.x) == 1)       //ÁÂ¿ì °ü°èÀÇ _POINT °ªÀÌ °°ÀºÁö ÆÇº°
+        if (ground[d1.x][d1.y] == ground[d2.x][d2.y])
+            return 1;
+    if (abs(d1.x - d2.x) == 1 && abs(d1.y - d2.y) == 1) //´ë°¢¼± °ü°èÀÇ _POINT °ªÀÌ °°ÀºÁö ÆÇº°
+        if (ground[d1.x][d1.y] == ground[d2.x][d2.y])
+            return 1;
+    if (d1.y == 4 && d2.y == 0 && d2.x - d1.x == 1)   //n¿­ÀÇ ¸¶Áö¸· Çà°ú n+1¿­ÀÇ Ã¹ ¹øÂ° ÇàÀÇ _POINT °ªÀÌ °°ÀºÁö ÆÇº°
+        if (ground[d1.x][d1.y] == ground[d2.x][d2.y])
+            return 1;
+        else if (d2.y == 4 && d1.y == 0 && d1.x - d2.x == 1)
+            if (ground[d1.x][d1.y] == ground[d2.x][d2.y])
+                return 1;
     return 0;
 }
 
-int match2(int ground[Y][X], _POINT d1, _POINT d2) { //ì¢Œìš° ê´€ê³„ì˜ _POINT ê°’ì´ ê°™ì€ì§€ íŒë³„
-    if (d1.y == d2.y && abs(d1.x - d2.x) == 1)
-        if (ground[d1.x][d1.y] == ground[d2.x][d2.y])
-            return 1;
-    return 0;
-}
-
-int match3(int ground[Y][X], _POINT d1, _POINT d2) { //ëŒ€ê°ì„  ê´€ê³„ì˜ _POINT ê°’ì´ ê°™ì€ì§€ íŒë³„
-    if (abs(d1.x - d2.x) == 1 && abs(d1.y - d2.y) == 1)
-        if (ground[d1.x][d1.y] == ground[d2.x][d2.y])
-            return 1;
-    return 0;
-}
-
-int match4(int ground[Y][X], _POINT d1, _POINT d2) { //nì—´ì˜ ë§ˆì§€ë§‰ í–‰ê³¼ n+1ì—´ì˜ ì²« ë²ˆì§¸ í–‰ì˜ _POINT ê°’ì´ ê°™ì€ì§€ íŒë³„
-    if (d1.y == 4 && d2.y == 0 && d2.x - d1.x == 1) {
-        if (ground[d1.x][d1.y] == ground[d2.x][d2.y])
-            return 1;
-    }
-    else if (d2.y == 4 && d1.y == 0 && d1.x - d2.x == 1)
-        if (ground[d1.x][d1.y] == ground[d2.x][d2.y])
-            return 1;
-    return 0;
-}
-
-void zero(int ground[Y][X], _POINT d1, _POINT d2) { //_POINTê°’ì„ 0ìœ¼ë¡œ ì´ˆê¸°í™”
+void zero(int ground[Y][X], _POINT d1, _POINT d2) { //_POINT°ªÀ» 0À¸·Î ÃÊ±âÈ­
     ground[d1.x][d1.y] = 0;
     ground[d2.x][d2.y] = 0;
 }
 
-void del(int arr[Y][X], int num) { //í•œ ì¤„ì˜ ê°’ì´ ëª¨ë‘ 0ì¼ ë•Œ ê·¸ ì¤„ì„ ë§¨ ë°‘ìœ¼ë¡œ ë‚´ë¦¼ 
+void del(int arr[Y][X], int num) { //ÇÑ ÁÙÀÇ °ªÀÌ ¸ğµÎ 0ÀÏ ¶§ ±× ÁÙÀ» ¸Ç ¹ØÀ¸·Î ³»¸² 
     for (int i = num; i < Y; i++)
         for (int j = 0; j < X; j++)
             if (i + 1 < Y) {
@@ -93,7 +82,7 @@ void del(int arr[Y][X], int num) { //í•œ ì¤„ì˜ ê°’ì´ ëª¨ë‘ 0ì¼ ë•Œ ê·¸ ì¤„ì
     print_ground(arr);
 }
 
-int scan(int ground[Y][X], int* score, int addnum) {
+int scan(int ground[Y][X], int* score, int addnum) {  //ÇÑ ÁÙÀÌ ¸ğµÎ 0ÀÎÁö ÆÇº°
     int a = 0;
     while (a < 2) {
         for (int i = 0; i < Y - *score + addnum; i++) {
@@ -111,7 +100,7 @@ int scan(int ground[Y][X], int* score, int addnum) {
     return 0;
 }
 
-void ground_add(int ground[Y][X], int level) { //ì¤„ ì¶”ê°€ í•¨ìˆ˜
+void ground_add(int ground[Y][X], int level) { //ÁÙ Ãß°¡ ÇÔ¼ö
     int stopAdding = 0;
     for (int i = 0; i < Y; i++) {
         int sum = 0;
@@ -132,113 +121,33 @@ void ground_add(int ground[Y][X], int level) { //ì¤„ ì¶”ê°€ í•¨ìˆ˜
 }
 
 
-void rank_record(char name[], int score) {
-    /*ì—¬ê¸°ë¶€í„°*/
-    FILE* fp_rank;
-    int numUsers = 0;
-    int r_score[MAX_U];
-    char r_name[MAX_U][10]; //ê¸€ììˆ˜ ìµœëŒ€ 10 
-
-    fp_rank = fopen("rank.txt", "r");
-    if (fp_rank == NULL) {
-        printf("íŒŒì¼ ì—´ ìˆ˜ ì—†ìŒ");
-        exit(1);
-    }
-
-    while (feof(fp_rank) == 0) {
-        fscanf(fp_rank, "%s %d", r_name[numUsers], &r_score[numUsers]);
-        numUsers++;
-    }
-
-    fclose(fp_rank);
-    /*ì—¬ê¸° ì¤„ì¼ ìˆ˜ ìˆì„ ê±° ê°™ì€ë° ê·¸ëŸ´ëŸ¬ë©´ êµ¬ì¡°ì²´ ì¨ì•¼ ë ë“¯*/
-
-    for (int i = numUsers; i > 1; i--)
-    {
-        if (r_score[i] > score) {
-            break;
-        }
-        else {
-            //rank ì˜ i ìœ„ì¹˜ì— nameê³¼ score ë„£ì–´ì¤Œ
-        }
-    }
-
-}
-
-void record(char name[], int score) {
-    FILE* fp_record = NULL;
-    fp_record = fopen("record.txt", "a");
-
-    if (fp_record == NULL) { printf("íŒŒì¼ ì—´ê¸°ì— ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤.\n"); }
-
-    fprintf(fp_record, "%s %d\n", name, score);
-
-    fclose(fp_record);
-
-    rank_record(name, score);
-}
-
-void print_rank() {
-    FILE* fp_rank;
-    int numUsers = 0;
-    int r_score[MAX_U];
-    char r_name[MAX_U][10]; //ê¸€ììˆ˜ ìµœëŒ€ 10 
-
-    fp_rank = fopen("rank.txt", "r");
-    if (fp_rank == NULL) {
-        printf("íŒŒì¼ ì—´ ìˆ˜ ì—†ìŒ");
-        exit(1);
-    }
-
-    while (feof(fp_rank) == 0) {
-        fscanf(fp_rank, "%s %d", r_name[numUsers], &r_score[numUsers]);
-        numUsers++;
-    }
-
-    fclose(fp_rank);
-
-    textcolor(3);
-    printf("  ìˆœìœ„  ì´ë¦„  ì ìˆ˜");
-    printf("\n------------------\n");
-    textcolor(1);
-    for (int i = 0; i < numUsers; i++)
-    {
-        printf("%4dìœ„ %4s %4d\n", i, r_name[i], r_score[i]);
-    }
-    textcolor(7);
-   
-}
-
-void lose(char name[], int final_score) {
-    record(name, final_score);
-    printf("\nGame Over\n");
-    printf("\nfinal score : %d\n", final_score);
-}
-  
-
 int main() {
-    int level=0, score = 0, heart = 0, addnum = 0, final_score = 0;
+    int level, score = 0, heart = 0, addnum = 0, final_score = 0;
     char name[20];
-    char button = NULL;
+    char button;
     printf("Number Match Game\n\n");
     print_howto();
-    printf("ë‚œì´ë„ë¥¼ ì„¤ì •í•˜ì„¸ìš”(ì…ë ¥í•œ ë‚œì´ë„ì˜ ìˆ«ì ê°¯ìˆ˜ê°€ ìƒì„±ë©ë‹ˆë‹¤) >> ");
-    scanf("%d", &level);
-    printf("ì´ë¦„ì„ ì…ë ¥í•˜ì‹œìš” >> ");
+    printf("ÀÌ¸§À» ÀÔ·ÂÇÏ½Ã¿À >> ");
     scanf("%s", name);
-    printf("ê²Œì„ ì‹œì‘ : s / ê²Œì„ ë­í‚¹ r >> ");
+    printf("³­ÀÌµµ¸¦ ¼³Á¤ÇÏ¼¼¿ä(ÀÔ·ÂÇÑ ³­ÀÌµµÀÇ ¼ıÀÚ °¹¼ö°¡ »ı¼ºµË´Ï´Ù) >> ");
+    scanf("%d", &level);
+    printf("°ÔÀÓ ½ÃÀÛ : s / °ÔÀÓ ·©Å· r >> ");
 
     while (1) {
+        int a = 0;
         scanf("%c", &button);
-        if (button == 's') {
+        switch (button) {
+        case 's':
             system("cls || clear");
+            a++;
+            break;
+        case 'r':
+            system("cls || clear");
+            a++;
             break;
         }
-        else if (button == 'r') {
-            system("cls || clear");
-            print_rank();
-            return 0;
-        }
+        if (a)
+            break;
     }
 
     srand((unsigned)time(NULL));
@@ -247,38 +156,33 @@ int main() {
         for (int j = 0; j < X; j++)
             ground[i][j] = rand() % level + 1;
 
-    printf("score:%d\n", score);
-    print_heart(5 - heart);
+    print_heart(5 - heart, score, level);
     print_ground(ground);
 
     while (1) {
         _POINT d1, d2;
         final_score = 5 * (level - 1) + score;
-        printf("ì²« ë²ˆì§¸ ì¢Œí‘œë¥¼ ì…ë ¥í•˜ì‹œì˜¤:");
+        printf("Ã¹ ¹øÂ° ÁÂÇ¥¸¦ ÀÔ·ÂÇÏ½Ã¿À:");
         scanf("%d %d", &d1.x, &d1.y);
 
         if (d1.x != 0 && d1.y != 0) {
             d1.x--; d1.y--;
-            printf("ë‘ ë²ˆì§¸ ì¢Œí‘œë¥¼ ì…ë ¥í•˜ì‹œì˜¤:");
+            printf("µÎ ¹øÂ° ÁÂÇ¥¸¦ ÀÔ·ÂÇÏ½Ã¿À:");
             scanf("%d %d", &d2.x, &d2.y);
             printf("\n");
             d2.x--; d2.y--;
-            if (match1(ground, d1, d2) || match2(ground, d1, d2) || match3(ground, d1, d2) || match4(ground, d1, d2))
+            if (match(ground, d1, d2))
                 zero(ground, d1, d2);
             else {
-                printf("ë‹¤ì‹œ ì…ë ¥í•˜ì„¸ìš”.\n\n");
                 heart++;
                 if (heart == 5) {
-                    lose(name,final_score);
                     break;
                 }
-                
+                printf("´Ù½Ã ÀÔ·ÂÇÏ¼¼¿ä.\n\n");
             }
-            system("cls || clear");
-            printf("score:%d\n",score);
-            print_heart(5 - heart);
-            print_ground(ground);
             scan(ground, &score, addnum);
+            print_heart(5 - heart, score, level);
+            print_ground(ground);
         }
         else {
             if (score != 0) {
@@ -286,17 +190,18 @@ int main() {
                 addnum++;
             }
             else {
-                printf("ë‹¤ì‹œ ì…ë ¥í•˜ì„¸ìš”.\n\n");
                 heart++;
                 if (heart == 5) {
-                    lose(name, final_score);
                     break;
                 }
+
+                printf("´Ù½Ã ÀÔ·ÂÇÏ¼¼¿ä.\n\n");
             }
 
         }
         if (score == 5) {
-            printf("ìŠ¹ë¦¬í•˜ì…¨ìŠµë‹ˆë‹¤! ë‹¤ìŒ ë‹¨ê³„ë¡œ ë„˜ì–´ê°‘ë‹ˆë‹¤.\n");
+            system("cls || clear");
+            printf("½Â¸®ÇÏ¼Ì½À´Ï´Ù! ´ÙÀ½ ´Ü°è·Î ³Ñ¾î°©´Ï´Ù.\n");
             level++;
             score = 0;
             for (int i = 0; i < Y; i++)
@@ -309,5 +214,5 @@ int main() {
 }
 
 void print_howto() {
-    printf("*ê²Œì„ ë°©ë²•*\n1.ê°€ë¡œ, ì„¸ë¡œ, ëŒ€ê°ì„ ìœ¼ë¡œ ë‹¿ì•„ìˆëŠ” ê°™ì€ ìˆ«ìì˜ ì¢Œí‘œë¥¼ ì…ë ¥í•´ ìˆ«ìë¥¼ 0ìœ¼ë¡œ ë§Œë“ ë‹¤.\n  (nì—´ì˜ ë§ˆì§€ë§‰ í–‰ê³¼ n+1ì—´ì˜ ì²«ë²ˆì§¸ í–‰ë„ ê°€ë¡œì— í¬í•¨í•œë‹¤.)\n2.4ì¤„ì„ 0ìœ¼ë¡œ ë§Œë“¤ë©´ ìŠ¹ë¦¬í•œë‹¤.\n3.ì²« ë²ˆì§¸ ì¢Œí‘œ ì…ë ¥ì—ì„œ 0 0ì„ ì…ë ¥í•˜ëŠ” ê²½ìš° ìˆ«ìê°€ ì¶”ê°€ëœë‹¤.\n\n* ì¢Œí‘œ ì…ë ¥ ì˜ˆì‹œ: 1 3(ì²« ë²ˆì§¸ ì¤„ ì„¸ë²ˆ ì§¸)\n\n");
+    printf("*°ÔÀÓ ¹æ¹ı*\n1.°¡·Î, ¼¼·Î, ´ë°¢¼±À¸·Î ´ê¾ÆÀÖ´Â °°Àº ¼ıÀÚÀÇ ÁÂÇ¥¸¦ ÀÔ·ÂÇØ ¼ıÀÚ¸¦ 0À¸·Î ¸¸µç´Ù.\n  (n¿­ÀÇ ¸¶Áö¸· Çà°ú n+1¿­ÀÇ Ã¹¹øÂ° Çàµµ °¡·Î¿¡ Æ÷ÇÔÇÑ´Ù.)\n2.4ÁÙÀ» 0À¸·Î ¸¸µé¸é ½Â¸®ÇÑ´Ù.\n3.Ã¹ ¹øÂ° ÁÂÇ¥ ÀÔ·Â¿¡¼­ 0 0À» ÀÔ·ÂÇÏ´Â °æ¿ì ¼ıÀÚ°¡ Ãß°¡µÈ´Ù.\n\n* ÁÂÇ¥ ÀÔ·Â ¿¹½Ã: 1 3(Ã¹ ¹øÂ° ÁÙ ¼¼¹ø Â°)\n\n");
 }
