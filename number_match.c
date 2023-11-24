@@ -120,6 +120,10 @@ void ground_add(int ground[Y][X], int level) { //줄 추가 함수
     print_ground(ground);
 }
 
+void lose(char name[], int final_score) {
+    printf("\nGame Over\n");
+    printf("\nfinal score : %d\n", final_score);
+}
 
 int main() {
     int level, score = 0, heart = 0, addnum = 0, final_score = 0;
@@ -176,9 +180,11 @@ int main() {
             else {
                 heart++;
                 if (heart == 5) {
+                    lose(name, final_score);
                     break;
                 }
                 printf("다시 입력하세요.\n\n");
+                continue;
             }
             scan(ground, &score, addnum);
             print_heart(5 - heart, score, level);
@@ -192,10 +198,11 @@ int main() {
             else {
                 heart++;
                 if (heart == 5) {
+                    lose(name, final_score);
                     break;
                 }
-
                 printf("다시 입력하세요.\n\n");
+                continue;
             }
 
         }
