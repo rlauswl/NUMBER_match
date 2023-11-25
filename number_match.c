@@ -235,8 +235,8 @@ void print_putmsg(int wrongput){ // 다시 입력하세요 메세지 출력
 }
 
 void lose(char name[], int final_score) { // 패배 시 화면 출력, 점수 기록 및 출력
-    printf("\nGame Over\n");
-    printf("\n%s님의 점수 : %d\n\n", name, final_score);
+    printf("\n   Game Over...\n");
+    printf("   %s님의 점수 : %d\n\n", name, final_score);
     rank_record(name, final_score);
     print_rank();
 }
@@ -244,17 +244,17 @@ void lose(char name[], int final_score) { // 패배 시 화면 출력, 점수 �
 int main() {
     int level, score = 0, heart = 0, addnum = 0, final_score = 0, wrongput=FALSE;
     char name[20];
-    char button;
+    char button=' ';
     printf("Number Match Game\n\n");
     print_howto();
     printf("이름을 입력하시오 >> ");
     scanf("%s", name);
     printf("난이도를 설정하세요(입력한 난이도의 숫자 갯수가 생성됩니다) >> ");
     scanf("%d", &level);
-    printf("게임 시작 : s / 게임 랭킹 r >> ");
 
     while (1) {
-        scanf("%c", &button);
+        printf("게임 시작 : s / 게임 랭킹 r >> ");
+        scanf(" %c", &button);
         if (button == 's') {
             system("cls || clear");
             break;
@@ -262,7 +262,7 @@ int main() {
         else if (button == 'r') {
             system("cls || clear");
             print_rank();
-            return 0;
+            continue;
         }
     }
 
