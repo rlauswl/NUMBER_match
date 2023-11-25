@@ -10,6 +10,7 @@
 #define RANKER 5
 
 void print_howto();
+void print_winmsg(win);
 
 typedef struct _POINT {
     int x;
@@ -234,6 +235,12 @@ void print_putmsg(int wrongput){ // 다시 입력하세요 메세지 출력
     }
 }
 
+void print_winmsg(int win) {
+    if (win) {
+        printf("승리하셨습니다! 다음 단계로 넘어갑니다.\n\n");
+    }
+}
+
 void lose(char name[], int final_score) { // 패배 시 화면 출력, 점수 기록 및 출력
     system("cls || clear");
     printf("\n   Game Over...\n");
@@ -243,7 +250,7 @@ void lose(char name[], int final_score) { // 패배 시 화면 출력, 점수 �
 }
 
 int main() {
-    int level, score = 0, heart = 0, addnum = 0, final_score = 0, wrongput=FALSE;
+    int level, score = 0, heart = 0, addnum = 0, final_score = 0, wrongput = FALSE , win = FALSE;
     char name[20];
     char button=' ';
     printf("Number Match Game\n\n");
@@ -321,23 +328,22 @@ int main() {
 
         }
 
-        scan(ground, &score, addnum);
-        print_heart(5 - heart, score, level);
-        print_ground(ground);
-        print_putmsg(wrongput);
-        wrongput = FALSE;
-
         if (score == 5) {
-            system("cls || clear");
-            printf("승리하셨습니다! 다음 단계로 넘어갑니다.\n");
+            win = TRUE;
             level++;
             score = 0;
             for (int i = 0; i < Y; i++)
                 for (int j = 0; j < X; j++)
                     ground[i][j] = rand() % level + 1;
-
-            print_ground(ground);
         }
+
+        scan(ground, &score, addnum);
+        print_heart(5 - heart, score, level);
+        print_ground(ground);
+        print_putmsg(wrongput);
+        print_winmsg(win);
+        wrongput = FALSE;
+        win = FALSE;
     }
 }
 
