@@ -235,6 +235,7 @@ void print_putmsg(int wrongput){ // 다시 입력하세요 메세지 출력
 }
 
 void lose(char name[], int final_score) { // 패배 시 화면 출력, 점수 기록 및 출력
+    system("cls || clear");
     printf("\n   Game Over...\n");
     printf("   %s님의 점수 : %d\n\n", name, final_score);
     rank_record(name, final_score);
@@ -300,11 +301,6 @@ int main() {
                     wrongput = TRUE;
                 }
             }
-            scan(ground, &score, addnum);
-            print_heart(5 - heart, score, level);
-            print_ground(ground);
-            print_putmsg(wrongput);
-            wrongput = FALSE;
         }
         else {
             if (score != 0) {
@@ -324,6 +320,13 @@ int main() {
             }
 
         }
+
+        scan(ground, &score, addnum);
+        print_heart(5 - heart, score, level);
+        print_ground(ground);
+        print_putmsg(wrongput);
+        wrongput = FALSE;
+
         if (score == 5) {
             system("cls || clear");
             printf("승리하셨습니다! 다음 단계로 넘어갑니다.\n");
