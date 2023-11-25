@@ -229,13 +229,10 @@ void print_rank() { // rank 출력
     printf("\n\n");
 }
 
-void print_putmsg(int wrongput){ // 다시 입력하세요 메세지 출력
+void msg(int wrongput,int win){ // 다시 입력하세요 메세지 출력
     if (wrongput) {
         printf("다시 입력하세요\n\n");
     }
-}
-
-void print_winmsg(int win) {
     if (win) {
         printf("승리하셨습니다! 다음 단계로 넘어갑니다.\n\n");
     }
@@ -340,8 +337,7 @@ int main() {
         scan(ground, &score, addnum);
         print_heart(5 - heart, score, level);
         print_ground(ground);
-        print_putmsg(wrongput);
-        print_winmsg(win);
+        msg(wrongput,win);
         wrongput = FALSE;
         win = FALSE;
     }
