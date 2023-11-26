@@ -11,6 +11,7 @@
 
 void print_howto();
 void print_winmsg(win);
+void print_title();
 
 typedef struct _POINT {
     int x;
@@ -230,12 +231,14 @@ void print_rank() { // rank 출력
 }
 
 void msg(int wrongput,int win){ // 다시 입력하세요 메세지 출력
+    textcolor(3);
     if (wrongput) {
-        printf("다시 입력하세요\n\n");
+        printf("잘못된 입력! 다시 입력하세요\n\n");
     }
     if (win) {
         printf("승리하셨습니다! 다음 단계로 넘어갑니다.\n\n");
     }
+    textcolor(7);
 }
 
 void lose(char name[], int final_score) { // 패배 시 화면 출력, 점수 기록 및 출력
@@ -249,8 +252,19 @@ void lose(char name[], int final_score) { // 패배 시 화면 출력, 점수 �
 int main() {
     int level, score = 0, heart = 0, addnum = 0, final_score = 0, wrongput = FALSE , win = FALSE;
     char name[20];
-    char button=' ';
-    printf("Number Match Game\n\n");
+    char button = ' ';
+   
+    textcolor(3);
+    print_title();
+    while (1) {
+        printf("\n\n\t\t  press any button!");
+        getch(button);
+        if (button != NULL) {
+            system("cls || clear");
+            break;
+        }
+    }
+
     print_howto();
     printf("이름을 입력하시오 >> ");
     scanf("%s", name);
@@ -344,5 +358,13 @@ int main() {
 }
 
 void print_howto() {
+    textcolor(6);
     printf("*게임 방법*\n1.가로, 세로, 대각선으로 닿아있는 같은 숫자의 좌표를 입력해 숫자를 0으로 만든다.\n  (n열의 마지막 행과 n+1열의 첫번째 행도 가로에 포함한다.)\n2.4줄을 0으로 만들면 승리한다.\n3.첫 번째 좌표 입력에서 0 0을 입력하는 경우 숫자가 추가된다.\n\n* 좌표 입력 예시: 1 3(첫 번째 줄 세번 째)\n\n");
+    textcolor(7);
+}
+
+void print_title() {
+    textcolor(3);
+    printf("\n\n  @@  @@   @@  @@  @@   @@    @@@@@   @@@@@@    @@@@@  \n  @@ @@@   @@  @@  @@@ @@@   @@  @@       @@   @@  @@  \n  @@@@@@   @@  @@  @@@@@@@   @@  @@       @@   @@  @@  \n  @@@@@@   @@  @@  @@ @ @@    @@@@@     @@@@    @@@@@  \n  @@@ @@   @@  @@  @@   @@   @@  @@       @@     @@@@  \n  @@  @@   @@  @@  @@   @@   @@  @@       @@    @@ @@  \n  @@  @@    @@@@   @@   @@    @@@@@   @@@@@@   @@  @@  \n\n  @@   @@       @@       @@@@@@      @@@@      @@  @@  \n  @@@ @@@      @@@@        @@       @@  @@     @@  @@  \n  @@@@@@@     @@  @@       @@           @@     @@  @@  \n  @@ @ @@     @@@@@@       @@           @@     @@@@@@  \n  @@   @@     @@  @@       @@           @@     @@  @@  \n  @@   @@     @@  @@       @@       @@  @@     @@  @@  \n  @@   @@     @@  @@       @@        @@@@      @@  @@  \n");
+    textcolor(7);
 }
