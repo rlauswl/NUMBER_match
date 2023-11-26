@@ -11,7 +11,9 @@
 
 void print_howto(); // 게임방법 출력
 void print_title(); // title 출력
+void rank_record(name, final_score);
 
+/*구조체 선언*/
 typedef struct _POINT {
     int x;
     int y;
@@ -22,6 +24,36 @@ typedef struct record {
     char name[MAX_U][10];
 }RECORD;
 
+
+
+/*기타 함수*/
+void textcolor(int color_number) {   //글씨 색 변경
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color_number);
+}
+
+void swap_int(int* x, int* y) { //int형 swap
+    int tmp;
+    tmp = *x;
+    *x = *y;
+    *y = tmp;
+}
+
+void swap_char(char* str1, char* str2) //char형 swap
+{
+    char* temp = (char*)malloc((strlen(str1) + 1) * sizeof(char));
+    strcpy(temp, str1);
+    strcpy(str1, str2);
+    strcpy(str2, temp);
+    free(temp);
+}
+
+int abs(int num) { //절댓값 계산
+    return(num > 0 ? num : -num);
+}
+
+
+
+/*출력 함수*/
 void print_ground(int ground[Y][X]) { //화면에 ground 출력
     printf("    | 1 2 3 4 5\n");
     printf("  --|-----------\n");
@@ -32,10 +64,6 @@ void print_ground(int ground[Y][X]) { //화면에 ground 출력
         printf("\n");
     }
     printf("\n");
-}
-
-void textcolor(int color_number) {   //글씨 색 변경
-    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color_number);
 }
 
 void print_heart(int heart, int score, int level) { //목숨 ♥로 표현
@@ -49,10 +77,57 @@ void print_heart(int heart, int score, int level) { //목숨 ♥로 표현
     textcolor(7);
 }
 
-int abs(int num) {
-    return(num > 0 ? num : -num);
+void print_rank() { // rank 출력
+    FILE* fp_rank;
+    RECORD user;
+    int count = 0;
+
+    fp_rank = fopen("rank.txt", "r");
+    if (fp_rank == NULL) {
+        printf("파일 열 수 없음");
+        exit(1);
+    }
+
+    while (feof(fp_rank) == 0) {
+        fscanf(fp_rank, "%s %d", user.name[count], &user.score[count]);
+        count++;
+    }
+
+    fclose(fp_rank);
+
+    textcolor(3);
+    printf("\n");
+    printf("    순위   이름   점수");
+    printf("\n   -------------------\n");
+    textcolor(7);
+    for (int i = 0; i < RANKER; i++){
+        printf("%6d위 %6s %6d\n", i + 1, user.name[i], user.score[i]);
+    }
+    printf("\n\n");
 }
 
+void msg(int wrongput, int win) { // 다시 입력하세요 메세지 출력
+    textcolor(3);
+    if (wrongput) {
+        printf("잘못된 입력! 다시 입력하세요\n\n");
+    }
+    if (win) {
+        printf("승리하셨습니다! 다음 단계로 넘어갑니다.\n\n");
+    }
+    textcolor(7);
+}
+
+void lose(char name[], int final_score) { // 패배 시 화면 출력, 점수 기록 및 출력
+    system("cls || clear");
+    printf("\n   Game Over...\n");
+    printf("   %s님의 점수 : %d\n\n", name, final_score);
+    rank_record(name, final_score);
+    print_rank();
+}
+
+
+
+/*로직 함수*/
 int match(int ground[Y][X], _POINT d1, _POINT d2) {
     if (d1.x == d2.x && abs(d1.y - d2.y) == 1)        //상하 관계의 _POINT 값이 같은지 판별
         if (ground[d1.x][d1.y] == ground[d2.x][d2.y])
@@ -128,27 +203,12 @@ void ground_add(int ground[Y][X], int level) { //줄 추가 함수
 }
 
 
-void swap_int(int* x, int* y) { //int형 swap
-    int tmp;
-    tmp = *x;
-    *x = *y;
-    *y = tmp;
-}
 
-void swap_char(char* str1, char* str2) //char형 swap
-{
-    char* temp = (char*)malloc((strlen(str1) + 1) * sizeof(char));
-    strcpy(temp, str1);
-    strcpy(str1, str2);
-    strcpy(str2, temp);
-    free(temp);
-}
-
+/*rank 기록 함수*/
 void make_rankfile() { // rank 파일 생성
     FILE* fp_rank;
     fp_rank = fopen("rank.txt", "w");
-    for (int i = 0; i < RANKER; i++)
-    {
+    for (int i = 0; i < RANKER; i++){
         fprintf(fp_rank, "name 0\n");
     }
     fclose(fp_rank);
@@ -191,68 +251,20 @@ void rank_record(char name[], int score) { //점수를 rank 파일에 기록
         exit(1);
     }
 
-    for (int i = 0; i < RANKER; i++)
-    {
+    for (int i = 0; i < RANKER; i++){
         fprintf(fp_rank, "%s %d\n", user.name[i], user.score[i]);
     }
 
     fclose(fp_rank);
 }
 
-void print_rank() { // rank 출력
-    FILE* fp_rank;
-    RECORD user;
-    int count = 0;
 
-    fp_rank = fopen("rank.txt", "r");
-    if (fp_rank == NULL) {
-        printf("파일 열 수 없음");
-        exit(1);
-    }
-
-    while (feof(fp_rank) == 0) {
-        fscanf(fp_rank, "%s %d", user.name[count], &user.score[count]);
-        count++;
-    }
-
-    fclose(fp_rank);
-
-    textcolor(3);
-    printf("\n");
-    printf("    순위   이름   점수");
-    printf("\n   -------------------\n");
-    textcolor(7);
-    for (int i = 0; i < RANKER; i++)
-    {
-        printf("%6d위 %6s %6d\n", i + 1, user.name[i], user.score[i]);
-    }
-    printf("\n\n");
-}
-
-void msg(int wrongput,int win){ // 다시 입력하세요 메세지 출력
-    textcolor(3);
-    if (wrongput) {
-        printf("잘못된 입력! 다시 입력하세요\n\n");
-    }
-    if (win) {
-        printf("승리하셨습니다! 다음 단계로 넘어갑니다.\n\n");
-    }
-    textcolor(7);
-}
-
-void lose(char name[], int final_score) { // 패배 시 화면 출력, 점수 기록 및 출력
-    system("cls || clear");
-    printf("\n   Game Over...\n");
-    printf("   %s님의 점수 : %d\n\n", name, final_score);
-    rank_record(name, final_score);
-    print_rank();
-}
 
 int main() {
     int level, score = 0, heart = 0, addnum = 0, final_score = 0, wrongput = FALSE , win = FALSE;
     char name[20];
     char button = ' ';
-    
+
     print_title();
     while (1) {
         printf("\n\n\t\t  press any button!");
@@ -332,9 +344,7 @@ int main() {
                 else {
                     wrongput = TRUE;
                 }
-                
             }
-
         }
 
         if (score == 5) {
