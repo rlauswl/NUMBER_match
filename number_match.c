@@ -9,9 +9,8 @@
 #define MAX_U 20
 #define RANKER 5
 
-void print_howto();
-void print_winmsg(win);
-void print_title();
+void print_howto(); // 게임방법 출력
+void print_title(); // title 출력
 
 typedef struct _POINT {
     int x;
