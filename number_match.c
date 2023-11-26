@@ -252,8 +252,7 @@ int main() {
     int level, score = 0, heart = 0, addnum = 0, final_score = 0, wrongput = FALSE , win = FALSE;
     char name[20];
     char button = ' ';
-   
-    textcolor(3);
+    
     print_title();
     while (1) {
         printf("\n\n\t\t  press any button!");
